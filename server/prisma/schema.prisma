@@ -1,0 +1,75 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Question {
+  id              Int           @id @default(autoincrement())
+  order           Int
+  title           String
+  questionnaireId Int
+  type            Question_type @default(TEXT)
+
+  @@index([questionnaireId])
+}
+
+model QuestionOption {
+  id         Int    @id @default(autoincrement())
+  questionId Int
+  value      String
+
+  @@index([questionId])
+}
+
+model QuestionRenderCondition {
+  id                  Int                               @id @default(autoincrement())
+  questionId          Int
+  condition           QuestionRenderCondition_condition
+  value               String
+  conditionQuestionId Int
+
+  @@index([conditionQuestionId])
+  @@index([questionId])
+}
+
+model QuestionResponse {
+  id         Int    @id @default(autoincrement())
+  questionId Int
+  userId     Int
+  value      String
+
+  @@index([questionId])
+  @@index([userId])
+}
+
+model Questionnaire {
+  id          Int    @id @default(autoincrement())
+  name        String
+  description String
+}
+
+model User {
+  id       Int    @id @default(autoincrement())
+  name     String
+  password String
+  username String
+}
+
+enum QuestionRenderCondition_condition {
+  HAS_TEXT
+  OPTION_SELECTED
+}
+
+enum Question_type {
+  TEXT
+  PARAGRAPH
+  ADDRESS
+  DATE
+  MULTI
+  RADIO
+  SIGNATURE
+}
